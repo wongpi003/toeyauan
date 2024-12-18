@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anniversary Website</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #ffcccb, #fff5e6);
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        img {
+            max-width: 200px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .content {
+            margin-top: 50px;
+        }
+        .game-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+        .item {
+            background-color: #fff;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 10px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        .selected {
+            background-color: #f8b400;
+            color: #fff;
+        }
+    </style>
+    <script>
+        // ฟังก์ชันสำหรับเปลี่ยนหน้า
+        function showPage(currentPage, nextPage) {
+            document.getElementById(currentPage).classList.add('hidden');
+            document.getElementById(nextPage).classList.remove('hidden');
+        }
+
+        // ตรวจสอบรหัสผ่าน
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            if (password === 'เตยอ้วน') {
+                showPage('page1', 'page2');
+            } else {
+                alert('รหัสผ่านไม่ถูกต้องค่ะ');
+            }
+        }
+
+        // เริ่มเกมจับคู่
+        function startGame() {
+          const words = [
+                { left: 'เซี้ยง', right: 'Golden Retriever' },
+                { left: 'เตย', right: 'หมู' },
+                { left: 'รัก', right: 'Love' },
+                { left: 'หวาน', right: 'Sweet' }
+            ]
+            const leftColumn = document.getElementById('left-column');
+            const rightColumn = document.getElementById('right-column');
+
+            leftColumn.innerHTML = '';
+            rightColumn.innerHTML = '';
+
+            // สุ่มคำ
+            const shuffledWords = words.sort(() => Math.random() - 0.5);
+
+            // เพิ่มคำในคอลัมน์ซ้ายและขวา
+            shuffledWords.forEach(word => {
+                const leftItem = document.createElement('div');
+                leftItem.className = 'item';
+                leftItem.textContent = word.left;
+                leftItem.onclick = () => selectItem(leftItem, 'left');
+                leftColumn.appendChild(leftItem);
+
+                const rightItem = document.createElement('div');
+                rightItem.className = 'item';
+                rightItem.textContent = word.right;
+                rightItem.onclick = () => selectItem(rightItem, 'right');
+                rightColumn.appendChild(rightItem);
+            });
+        }
+
+        let selectedLeft = null;
+        let selectedRight = null;
+
+        // เลือกคำในคอลัมน์
+        function selectItem(item, side) {
+            if (side === 'left') {
+                if (selectedLeft) selectedLeft.classList.remove('selected');
+                selectedLeft = item;
+            } else {
+                if (selectedRight) selectedRight.classList.remove('selected');
+                selectedRight = item;
+            }
+            item.classList.add('selected');
+
+            // ตรวจสอบการจับคู่
+            if (selectedLeft && selectedRight) {
+                checkMatch();
+            }
+        }
+
+        // ตรวจสอบคำที่เลือก
+        function checkMatch() {
+            const words = [
+                { left: 'เซี้ยง', right: 'Golden Retriever' },
+                { left: 'เตย', right: 'หมู' },
+                { left: 'รัก', right: 'Love' },
+                { left: 'หวาน', right: 'Sweet' }
+            ];
+
+
+            const isMatch = words.some(word =>
+                (selectedLeft.textContent === word.left && selectedRight.textContent === word.right)
+            );
+
+            if (isMatch) {
+                selectedLeft.classList.add('hidden');
+                selectedRight.classList.add('hidden');
+                selectedLeft = null;
+                selectedRight = null;
+
+                // ตรวจสอบว่าจบเกมหรือยัง
+                const remainingLeft = document.querySelectorAll('#left-column .item:not(.hidden)');
+                const remainingRight = document.querySelectorAll('#right-column .item:not(.hidden)');
+
+                if (remainingLeft.length === 0 && remainingRight.length === 0) {
+                    showPage('game', 'page5');
+                }
+            } else {
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+                selectedLeft = null;
+                selectedRight = null;
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Page 1: Password Input -->
+    <div id="page1" class="content">
+        <h1>กรุณากรอกรหัสผ่าน</h1>
+        <input type="password" id="password" placeholder="กรอกรหัสผ่าน">
+        <button onclick="validatePassword()">เข้าสู่เว็บไซต์</button>
+    </div>
+
+    <!-- Page 2: Happy Anniversary -->
+    <div id="page2" class="content hidden">
+        <h1>สุขสันต์วันครบรอบ 3 เดือนนะคะ</h1>
+        <img src="OIG2.jpg" alt="หมูน่ารัก" onclick="showPage('page2', 'page3')">
+    </div>
+
+    <!-- Page 3: Wishing Happiness -->
+    <div id="page3" class="content hidden">
+        <h1>ขอให้เบบี๋เตยมีความสุขมากๆนะคะ อยู่ด้วยกันไปนานๆน้าา รักบี๋นะคะ</h1>
+        <img src="OIG2.jpg" alt="หมูน่ารัก" onclick="showPage('page3', 'page4')">
+    </div>
+
+    <!-- Page 4: Start Game -->
+    <div id="page4" class="content hidden">
+        <h1> (Golden Retriever Game)</h1>
+        <h2>พร้อมจะเล่นเกมจับคู่แล้วหรือยัง?</h2>
+        <button onclick="startGame(); showPage('page4', 'game')">เริ่มเกมจับคู่</button>
+    </div>
+
+    <!-- Game Page -->
+    <div id="game" class="content hidden">
+        <h1>เกมจับคู่คำศัพท์วันครบรอบ</h1>
+          <img src="OIG1.jpg" alt="Golden Retriever และ หมู">
+        <div class="game-container">
+            <div class="column" id="left-column"></div>
+            <div class="column" id="right-column"></div>
+        </div>
+    </div>
+
+    <!-- Page 5: End -->
+    <div id="page5" class="content hidden">
+        <h1>สุดท้ายยยย แก้มใหญ่ๆนะคะเตยอ้วน</h1>
+        <img src="OIG4.jpg" alt="Golden Retriever และ หมู">
+        <p> รักเตยมากๆน้า ไว้เจอกันเปิดเทอมนะคะที่รัก</p>
+    </div>
+</body>
+</html>
